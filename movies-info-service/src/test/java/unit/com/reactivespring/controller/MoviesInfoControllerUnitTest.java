@@ -74,4 +74,21 @@ class MoviesInfoControllerUnitTest {
                     assertThat(savedMovieInfo.getName()).isEqualTo("Batman Begins");
                 });
     }
+
+    @Test
+    void addMovieInfo_validation() {
+        MovieInfo movieInfo = new MovieInfo("dummy", "",
+                null, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
+
+        webTestClient.post()
+                .uri(MOVIES_INFO_URL)
+                .bodyValue(movieInfo)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(String.class)
+                .consumeWith(stringEntityExchangeResult -> {
+                    String responseBody = stringEntityExchangeResult.getResponseBody();
+                    assertThat(responseBody).isNotNull().contains("name must not be blank");
+                });
+    }
 }
