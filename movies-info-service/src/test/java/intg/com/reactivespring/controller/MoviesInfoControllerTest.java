@@ -109,6 +109,19 @@ class MoviesInfoControllerTest {
     }
 
     @Test
+    void updateMovieInfo_notFound() {
+        String id = "def";
+        MovieInfo movieInfo = new MovieInfo(null, "Dark Knight Rises1",
+                2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
+
+        webTestClient.put()
+                .uri(MOVIES_INFO_URL + "/{id}", id)
+                .bodyValue(movieInfo)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
     void deleteMovieInfo() {
         String id = "abc";
 
