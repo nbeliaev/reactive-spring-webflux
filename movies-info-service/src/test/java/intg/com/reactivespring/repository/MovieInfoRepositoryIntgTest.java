@@ -62,6 +62,15 @@ class MovieInfoRepositoryIntgTest {
     }
 
     @Test
+    void findByYear() {
+        Flux<MovieInfo> flux = movieInfoRepository.findByYear(2005).log();
+
+        StepVerifier.create(flux)
+                .expectNextCount(1)
+                .verifyComplete();
+    }
+
+    @Test
     void findById_Empty() {
         Mono<MovieInfo> mono = movieInfoRepository.findById("abc1").log();
 
