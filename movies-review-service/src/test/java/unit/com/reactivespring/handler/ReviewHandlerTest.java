@@ -1,6 +1,7 @@
 package com.reactivespring.handler;
 
 import com.reactivespring.domain.Review;
+import com.reactivespring.exceptionhandler.GlobalErrorHandler;
 import com.reactivespring.repository.ReviewReactiveRepository;
 import com.reactivespring.router.ReviewRouter;
 import org.junit.jupiter.api.Test;
@@ -14,13 +15,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
 @WebFluxTest
-@ContextConfiguration(classes = {ReviewRouter.class, ReviewHandler.class})
+@ContextConfiguration(classes = {ReviewRouter.class, ReviewHandler.class, GlobalErrorHandler.class})
 @ExtendWith(SpringExtension.class)
 class ReviewHandlerTest {
 
@@ -47,6 +46,18 @@ class ReviewHandlerTest {
                     Review savedReview = movieInfoEntityExchangeResult.getResponseBody();
                     assertThat(savedReview.getId()).isNotNull().isEqualTo("abc");
                 });
+
+    }
+
+    @Test
+    void addReview_validation() {
+        Review review = new Review(null, null, "Awesome Movie", -9.0);
+
+        webTestClient.post()
+                .uri(REVIEW_URL)
+                .bodyValue(review)
+                .exchange()
+                .expectStatus().isBadRequest();
 
     }
 }
