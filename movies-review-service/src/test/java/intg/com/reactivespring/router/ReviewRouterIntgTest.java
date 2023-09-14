@@ -86,4 +86,16 @@ class ReviewRouterIntgTest {
                     assertThat(updatedReview.getComment()).isEqualTo("Excellent Movie 2");
                 });
     }
+
+    @Test
+    void updateReview_notFound() {
+        String id = "abb";
+        Review review = new Review("abc", 2L, "Excellent Movie 2", 10.0);
+
+        webTestClient.put()
+                .uri(REVIEW_URL + "/{id}", id)
+                .bodyValue(review)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
 }
