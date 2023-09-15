@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class MovieInfo {
-    private String movieInfoId;
+    private String id;
     @NotBlank(message = "movieInfo.name must be present")
     private String name;
     @NotNull
@@ -26,5 +26,5 @@ public class MovieInfo {
 
     @NotNull
     private List<@NotBlank(message = "movieInfo.cast must be present") String> cast;
-    private LocalDate release_date;
+    private LocalDate releaseDate;
 }
