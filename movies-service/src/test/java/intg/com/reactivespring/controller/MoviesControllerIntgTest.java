@@ -1,5 +1,6 @@
 package com.reactivespring.controller;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.reactivespring.domain.Movie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +69,24 @@ public class MoviesControllerIntgTest {
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody(String.class);
+
+        WireMock.verify(1, getRequestedFor(urlEqualTo("/v1/movieinfos/" + movieId)));
+    }
+
+    @Test
+    void retrieveMovieById_5xx() {
+        String movieId = "abc";
+        stubFor(get(urlEqualTo("/v1/movieinfos/" + movieId))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .withBody("Unavailable")));
+
+        webTestClient.get()
+                .uri("/v1/movies/{id}", movieId)
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectBody(String.class);
+
+        WireMock.verify(4, getRequestedFor(urlEqualTo("/v1/movieinfos/" + movieId)));
     }
 }
